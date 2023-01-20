@@ -4,10 +4,17 @@ const domDisplay = (aSearchResult) => {
     const searchResult = document.createElement('div');
     searchResult.classList.add('searchResult')
 
-    const name = document.createElement('span').textContent = aSearchResult.name + ", ";
-    const country = document.createElement('span').textContent = aSearchResult.country + ", ";
+    const city = document.createElement('span').textContent = aSearchResult.city + ", ";
+    searchResult.append(city)
 
-    searchResult.append(name, country)
+    if (aSearchResult.state) {
+        const state = document.createElement('span').textContent = aSearchResult.state + ", ";
+        searchResult.append(state)
+    }
+
+    const country = document.createElement('span').textContent = aSearchResult.country + ", ";
+    searchResult.append(country)
+
     container.append(searchResult)
 
     searchResult.addEventListener('click', () => {
@@ -18,11 +25,12 @@ const domDisplay = (aSearchResult) => {
 }
 
 const tempDisplay = (temperature) => {
-    const temperatureDisplay = document.createElement('span').textContent = "c" + temperature;
+    const temperatureDisplay = document.createElement('div').textContent = "c" + temperature;
     document.querySelector('.container').append(temperatureDisplay);
 }
 
 const search = async (searchTerm) => {
+    console.log(searchTerm)
     try {
         const res = await fetch(
             `https://geocoding-api.open-meteo.com/v1/search?name=${searchTerm}`
@@ -31,13 +39,14 @@ const search = async (searchTerm) => {
 
         for (let key = 0; key < Object.keys(data).length; key++) {
             const searchResult = {
-                name: data.results[key].name,
+                city: data.results[key].name,
                 country: data.results[key].country,
+                state: data.results[key].admin1,
                 latitude: data.results[key].latitude,
                 longitude: data.results[key].longitude,
+                message: data.results,
             }
             domDisplay(searchResult)
-            console.log(searchResult)
         }
     }
     catch (error) {
@@ -69,5 +78,7 @@ document.body.append(searchBtn)
 searchBtn.textContent = 'search'
 
 searchBtn.addEventListener('click', () => {
-    search(input.value)
+    let cleanSearch = input.value.replace(/[^a-zA-Z\s]/g, "");
+    search(cleanSearch)
+
 })
