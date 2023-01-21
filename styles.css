@@ -1,51 +1,110 @@
-body {
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    background-color: slategray;
+:root {
+  --active: rgb(255, 255, 255);
+  --idle: rgb(127, 127, 127);
+  --red: 10;
+  --blue: 40;
+  --green: 30;
+  --color: rgb(108, 140, 174);
 }
 
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.inputAndSearch {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90vw;
+}
+
+input {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #ffffff;
+  outline: 0;
+  font-size: 2vh;
+  color: var(--idle);
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 1s;
+  text-align: center;
+}
+
+input:focus {
+  padding-bottom: 6px;
+  border-width: 3px;
+  border-color: var(--active);
+  color: var(--active);
+  border-image-slice: 1;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  transition: all 2s ease;
+}
+
+.gradient {
+  background-image: linear-gradient(to bottom,
+      hsl(0, 0%, 50%),
+      hsl(0, 0%, 21%));
+  z-index: 1;
+}
+
+.gradient::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(to top, rgb(var(--red), var(--green), var(--blue)), var(--color));
+  z-index: -1;
+  transition: opacity 0.5s linear;
+  opacity: 0;
+}
+
+.gradient.active::before {
+  opacity: 1;
+}
+
+.hidden {
+  display: none;
 }
 
 .searchResult {
-    background-color: #f2f2f2;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 10px;
-    cursor: pointer;
-}
+  width: fit-content;
+  font-size: 1.5vh;
+  color: var(--active);
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  background: transparent;
+  transition: border-color 1s;
+  text-align: center;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.055);
 
-
-input {
-    padding: 10px;
-    margin: 10px;
-    font-size: 20px;
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    margin: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-button:hover {
-    background-color: #3e8e41;
+  border: solid var(--idle) 1px;
+  padding: 10px;
+  width: 7vh;
+  margin: 1vh;
+  color: var(--idle);
+  border-radius: 10px;
 }
 
 .temperatureDisplay {
-    font-size: 100vh;
+  font-size: 10vh;
+  color: white;
+}
+
+.tempLabel,
+.timeDisplay {
+  color: white;
+  margin: 1vh;
 }
