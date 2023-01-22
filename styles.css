@@ -110,7 +110,8 @@ button {
   margin: 2vw;
   padding: 1vh;
   background-color: transparent;
-  color: white
+  color: white;
+  cursor: pointer;
 }
 
 button:hover {
