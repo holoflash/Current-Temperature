@@ -1,4 +1,5 @@
 const domDisplay = (aSearchResult, temperature, flag, localTime) => {
+    //Generate and display the search results
     const searchResult = document.createElement('div');
     searchResult.classList.add('searchResult')
 
@@ -9,71 +10,75 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
         const state = document.createElement('span').textContent = aSearchResult.state + ", ";
         searchResult.append(state)
     }
-
-    const country = document.createElement('span').textContent = aSearchResult.country + " ";
-    searchResult.append(country)
-
-    const flagIcon = document.createElement('img');
-    flagIcon.crossOrigin = 'anonymous'
-    flagIcon.style.height = '15px'
-    flagIcon.src = flag;
-    searchResult.append(flagIcon)
-
-    input.classList.add('hidden')
-    searchBtn.classList.add('hidden')
-    inputAndSearch.append(searchResult)
+    if (aSearchResult.country) {
+        const country = document.createElement('span').textContent = aSearchResult.country + "";
+        searchResult.append(country)
+    }
+    if (flag) {
+        const flagIcon = document.createElement('img');
+        flagIcon.crossOrigin = 'anonymous'
+        flagIcon.src = flag;
+        searchResult.append(flagIcon)
+    }
+    document.body.append(searchResult)
 
 
     searchResult.addEventListener('click', (event) => {
+        //Hide all search results
+        document.querySelectorAll('.searchResult').forEach(result => result.remove());
+
+        //Store selected city in localStorage
         const myCity = { aSearchResult };
         localStorage.setItem("myCity", JSON.stringify(myCity));
+
+        //Set background gradient colors based on temp and time
+        //Cold = blue, warm = red, night = dark-blue, day = orange
         let red = (temperature + 40) / 80 * 255;
         let blue = (80 - temperature) / 80 * 255;
+        let [hours] = localTime.split(':').map(Number);
+        let timeColor;
+        if (hours >= 6 && hours < 18) {
+            timeColor = 'orange';
+        } else {
+            timeColor = 'rgb(0,0,50)';
+        }
+
         const root = document.documentElement.style;
         root.setProperty("--red", red);
         root.setProperty("--blue", blue);
-        root.setProperty("--color", 'orange');
+        root.setProperty("--color", timeColor);
         const gradient = document.querySelector('.gradient');
         gradient.classList.toggle('active');
 
+        //Display full city name, temp, time of temp fetch and option to change city
         inputAndSearch.remove();
-
         const temperatureDisplay = document.createElement('div');
         const tempLabel = document.createElement('div');
         const timeDisplay = document.createElement('div');
+        const changeCity = document.createElement('button')
 
         timeDisplay.classList.add('timeDisplay')
         tempLabel.classList.add('tempLabel')
         temperatureDisplay.classList.add('temperatureDisplay');
+        changeCity.classList.add('changeCity')
 
-        timeDisplay.textContent = localTime
+        timeDisplay.textContent = "Temperature fetched: " + localTime
         tempLabel.textContent = event.target.textContent;
         temperatureDisplay.textContent = temperature + "°C";
+        changeCity.textContent = "Change city"
 
-        document.body.append(timeDisplay, tempLabel, temperatureDisplay)
+        changeCity.addEventListener('click', () => {
+            localStorage.clear();
+            location.reload();
+        })
 
+        document.title = "Current Temperature in: " + event.target.textContent;
+        document.body.append(changeCity, tempLabel, temperatureDisplay, timeDisplay)
+        document.body.style.justifyContent = "space-around";
     });
 }
 
-document.body.classList.add('gradient')
-const inputAndSearch = document.createElement('div');
-const input = document.createElement('input');
-const searchBtn = document.createElement('button');
-
-inputAndSearch.append(input, searchBtn);
-document.body.append(inputAndSearch);
-
-inputAndSearch.classList.add('inputAndSearch')
-
-input.placeholder = 'Search for city'
-
-searchBtn.textContent = 'search'
-searchBtn.addEventListener('click', () => {
-    let cleanSearch = input.value.replace(/[^a-zåäöA-Z\s]/g, "");
-    search(cleanSearch)
-})
-
-
+//Start of data gathering
 const search = async (searchTerm) => {
     try {
         const res = await fetch(
@@ -81,6 +86,7 @@ const search = async (searchTerm) => {
         );
         const data = await res.json();
         for (let key = 0; key < Object.keys(data.results).length; key++) {
+            document.body.classList.add('disabled');
             const searchResult = {
                 city: data.results[key].name,
                 country: data.results[key].country,
@@ -94,7 +100,9 @@ const search = async (searchTerm) => {
             const flag = await getFlag(searchResult.country_code);
             const localTime = getLocalTime(searchResult.timezone);
             domDisplay(searchResult, temperature, flag, localTime)
+            document.body.classList.remove('disabled');
         }
+
     }
     catch (error) {
         input.value = ''
@@ -112,7 +120,7 @@ const getTemperature = async (lat, long) => {
         return data.current_weather.temperature
     }
     catch (error) {
-        console.log(error)
+        return 'temperature unavailable'
     }
 }
 
@@ -124,7 +132,7 @@ const getFlag = async (country_code) => {
         return res.url
     }
     catch (error) {
-        console.log(error)
+        return 'flag unavailable'
     }
 }
 
@@ -134,7 +142,7 @@ const getLocalTime = (timeZone) => {
     return date.toLocaleString("en-US", options);
 }
 
-
+//If a city is stored in localStorage - get the current temperature and localTime and display as single search result
 const getLocalStorage = async () => {
     const temperature = await getTemperature(myCity.aSearchResult.latitude, myCity.aSearchResult.longitude);
     const flag = await getFlag(myCity.aSearchResult.country_code);
@@ -143,12 +151,31 @@ const getLocalStorage = async () => {
 }
 
 let myCity = JSON.parse(localStorage.getItem("myCity")) || {};
-
 if (Object.keys(myCity).length > 0) {
     getLocalStorage()
 }
 
-document.body.addEventListener('dblclick', () => {
-    localStorage.clear();
-    location.reload();
+//Home page
+const inputAndSearch = document.createElement('div');
+const input = document.createElement('input');
+const searchBtn = document.createElement('button');
+
+inputAndSearch.append(input, searchBtn);
+document.body.append(inputAndSearch);
+document.body.classList.add('gradient')
+
+inputAndSearch.classList.add('inputAndSearch')
+input.placeholder = 'City'
+searchBtn.textContent = 'Search'
+
+input.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+        searchBtn.click();
+    }
+})
+
+searchBtn.addEventListener('click', () => {
+    document.querySelectorAll('.searchResult').forEach(result => result.remove());
+    let cleanSearch = input.value.replace(/[^a-zåäöA-Z\s]/g, "");
+    search(cleanSearch)
 })

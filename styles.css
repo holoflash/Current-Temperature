@@ -7,62 +7,72 @@
   --color: rgb(108, 140, 174);
 }
 
-.inputAndSearch {
+html,
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  width: 90vw;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  overflow: scroll;
+}
+
+.inputAndSearch {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  margin: 2vh;
 }
 
 input {
   width: 100%;
   border: 0;
-  border-bottom: 2px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
   outline: 0;
   font-size: 2vh;
-  color: var(--idle);
   padding: 7px 0;
+  color: white;
   background: transparent;
   transition: border-color 1s;
-  text-align: center;
 }
 
-input:focus {
+input:hover {
   padding-bottom: 6px;
-  border-width: 3px;
+  border-width: 2px;
   border-color: var(--active);
   color: var(--active);
   border-image-slice: 1;
 }
 
-body {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  transition: all 2s ease;
+input:focus {
+  padding-bottom: 6px;
+  border-width: 2px;
+  border-color: var(--active);
+  color: var(--active);
+  border-image-slice: 1;
 }
 
 .gradient {
   background-image: linear-gradient(to bottom,
-      hsl(0, 0%, 50%),
+      hsl(0, 0%, 34%),
       hsl(0, 0%, 21%));
+  position: absolute;
+  height: 100vh;
+  width: 100%;
   z-index: 1;
 }
 
 .gradient::before {
-  position: absolute;
   content: "";
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  position: absolute;
+  height: 100vh;
+  width: 100%;
   background-image: linear-gradient(to top, rgb(var(--red), var(--green), var(--blue)), var(--color));
   z-index: -1;
-  transition: opacity 0.5s linear;
+  transition: opacity 2s linear;
   opacity: 0;
 }
 
@@ -75,36 +85,97 @@ body {
 }
 
 .searchResult {
-  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 1.5vh;
+  width: 50%;
   color: var(--active);
   padding: 10px;
-  margin: 10px;
-  border-radius: 10px;
+  margin: 1vh;
   background: transparent;
   transition: border-color 1s;
-  text-align: center;
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.055);
+  outline: solid var(--idle) 1px;
+}
 
+.searchResult:hover {
+  outline: solid var(--active) 2px;
 }
 
 button {
-  border: solid var(--idle) 1px;
-  padding: 10px;
-  width: 7vh;
-  margin: 1vh;
-  color: var(--idle);
-  border-radius: 10px;
+  border: none;
+  outline: solid white 1px;
+  width: auto;
+  margin: 2vw;
+  padding: 1vh;
+  background-color: transparent;
+  color: white
+}
+
+button:hover {
+  outline: solid var(--active) 2px;
 }
 
 .temperatureDisplay {
-  font-size: 10vh;
+  font-size: 20vh;
   color: white;
+  transition: all 1s ease;
+  text-shadow: 0vh 2vh 0 rgba(0, 0, 0, 0.037);
 }
 
-.tempLabel,
+.temperatureDisplay:hover {
+  transform: rotate3d(2, 1, 0, 15deg);
+  text-shadow: -1vh 3vh 5px rgba(0, 0, 0, 0.016);
+}
+
+.tempLabel {
+  font-family: 'Courier New', Courier, monospace;
+  color: rgb(255, 255, 255);
+  margin: 1vh;
+  text-align: center;
+  font-size: 2vh;
+  cursor: pointer;
+}
+
 .timeDisplay {
+  font-family: 'Courier New', Courier, monospace;
   color: white;
   margin: 1vh;
+  text-align: center;
+  font-size: 1.5vh;
+}
+
+img {
+  margin-inline-start: 10px;
+  height: 3vh;
+  width: 5vh;
+}
+
+.changeCity {
+  position: absolute;
+  top: 0;
+  right: 0
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.holoflash {
+  all: unset;
+  color: moccasin;
+  position: absolute;
+  bottom: 5px;
+  cursor: pointer;
+}
+
+.holoflash:hover {
+  color: orange;
+}
+
+.info {
+  position: absolute;
+  bottom: 0;
+  left: 0
 }
