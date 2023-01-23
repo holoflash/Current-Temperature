@@ -3,15 +3,15 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
     const searchResult = document.createElement('div');
     searchResult.classList.add('searchResult')
 
-    const city = document.createElement('span').textContent = aSearchResult.city + ", ";
+    const city = document.createElement('span').textContent = aSearchResult.city;
     searchResult.append(city)
 
     if (aSearchResult.state) {
-        const state = document.createElement('span').textContent = aSearchResult.state + ", ";
+        const state = document.createElement('span').textContent = ", " + aSearchResult.state;
         searchResult.append(state)
     }
     if (aSearchResult.country) {
-        const country = document.createElement('span').textContent = aSearchResult.country + "";
+        const country = document.createElement('span').textContent = ", " + aSearchResult.country;
         searchResult.append(country)
     }
     if (flag) {
@@ -123,8 +123,7 @@ const search = async (searchTerm) => {
     }
     catch (error) {
         input.value = ''
-        input.placeholder = 'city not found'
-        console.log(error)
+        input.placeholder = 'City not found'
     }
 };
 
@@ -170,6 +169,7 @@ const getLocalStorage = async () => {
     const flag = await getFlag(savedCity.country_code);
     const localTime = getLocalTime(savedCity.timezone);
     const fullName = `${savedCity.city}${savedCity.state ? ', ' + savedCity.state : ''}${savedCity.country ? ', ' + savedCity.country : ''}`;
+
     domDisplay(savedCity, temperature, flag, localTime);
     handleCityClick(fullName, savedCity, temperature, localTime);
 }
