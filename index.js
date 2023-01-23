@@ -22,73 +22,77 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
     }
     document.body.append(searchResult)
 
-
     searchResult.addEventListener('click', (event) => {
-        //Hide all search results
-        document.querySelectorAll('.searchResult').forEach(result => result.remove());
-
-        //Store selected city in localStorage
-        const myCity = { aSearchResult };
-        localStorage.setItem("myCity", JSON.stringify(myCity));
-
-        //Set background gradient colors based on temp and time
-        //Cold = blue, warm = red, night = dark-blue, day = orange
-        let red = (temperature + 40) / 80 * 255;
-        let blue = (80 - temperature) / 80 * 255;
-        let [hours] = localTime.split(':').map(Number);
-        let timeColor;
-        if (hours >= 6 && hours < 18) {
-            timeColor = 'orange';
-        } else {
-            timeColor = 'rgb(0,0,50)';
-        }
-
-        const root = document.documentElement.style;
-        root.setProperty("--red", red);
-        root.setProperty("--blue", blue);
-        root.setProperty("--color", timeColor);
-        const gradient = document.querySelector('.gradient');
-        gradient.classList.toggle('active');
-
-        //Display full city name, temp, time of temp fetch and option to change city
-        inputAndSearch.remove();
-        const temperatureDisplay = document.createElement('div');
-        const tempLabel = document.createElement('div');
-        const timeDisplay = document.createElement('div');
-        const changeCity = document.createElement('button')
-
-        timeDisplay.classList.add('timeDisplay')
-        tempLabel.classList.add('tempLabel')
-        temperatureDisplay.classList.add('temperatureDisplay');
-        changeCity.classList.add('changeCity')
-
-        timeDisplay.textContent = "Temperature fetched: " + localTime
-        tempLabel.textContent = event.target.textContent;
-        temperatureDisplay.textContent = temperature + "°C";
-        changeCity.textContent = "Change city"
-
-        //Celsius/fahrenheit toggle
-        temperatureDisplay.addEventListener('click', () => {
-            if (temperatureDisplay.textContent.endsWith("°C")) {
-                temperature = (temperature * 9 / 5) + 32;
-                temperature = temperature.toFixed(1);
-                temperatureDisplay.textContent = temperature + "°F";
-            } else {
-                temperature = (temperature - 32) * 5 / 9;
-                temperature = temperature.toFixed(1);
-                temperatureDisplay.textContent = temperature + "°C";
-            }
-        });
-
-        changeCity.addEventListener('click', () => {
-            localStorage.clear();
-            location.reload();
-        })
-
-        document.title = "Current Temperature in: " + event.target.textContent;
-        document.body.append(changeCity, tempLabel, temperatureDisplay, timeDisplay)
-        document.body.style.justifyContent = "space-around";
+        let fullName = event.target.textContent;
+        handleCityClick(fullName, aSearchResult, temperature, localTime);
     });
+}
+
+const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
+    //Hide all search results
+    document.querySelectorAll('.searchResult').forEach(result => result.remove());
+
+    //Store selected city in localStorage
+    const myCity = { aSearchResult };
+    localStorage.setItem("myCity", JSON.stringify(myCity));
+
+    //Set background gradient colors based on temp and time
+    //Cold = blue, warm = red, night = dark-blue, day = orange
+    let red = (temperature + 40) / 80 * 255;
+    let blue = (80 - temperature) / 80 * 255;
+    let [hours] = localTime.split(':').map(Number);
+    let timeColor;
+    if (hours >= 6 && hours < 18) {
+        timeColor = 'orange';
+    } else {
+        timeColor = 'rgb(0,0,50)';
+    }
+
+    const root = document.documentElement.style;
+    root.setProperty("--red", red);
+    root.setProperty("--blue", blue);
+    root.setProperty("--color", timeColor);
+    const gradient = document.querySelector('.gradient');
+    gradient.classList.toggle('active');
+
+    //Display full city name, temp, time of temp fetch and option to change city
+    inputAndSearch.remove();
+    const temperatureDisplay = document.createElement('div');
+    const tempLabel = document.createElement('div');
+    const timeDisplay = document.createElement('div');
+    const changeCity = document.createElement('button')
+
+    timeDisplay.classList.add('timeDisplay')
+    tempLabel.classList.add('tempLabel')
+    temperatureDisplay.classList.add('temperatureDisplay');
+    changeCity.classList.add('changeCity')
+
+    timeDisplay.textContent = "Temperature fetched: " + localTime
+    tempLabel.textContent = fullName;
+    temperatureDisplay.textContent = temperature + "°C";
+    changeCity.textContent = "Change city"
+
+    //Celsius/fahrenheit toggle
+    temperatureDisplay.addEventListener('click', () => {
+        if (temperatureDisplay.textContent.endsWith("°C")) {
+            temperature = (temperature * 9 / 5) + 32;
+            temperature = temperature.toFixed(1);
+            temperatureDisplay.textContent = temperature + "°F";
+        } else {
+            temperature = (temperature - 32) * 5 / 9;
+            temperature = temperature.toFixed(1);
+            temperatureDisplay.textContent = temperature + "°C";
+        }
+    });
+
+    changeCity.addEventListener('click', () => {
+        localStorage.clear();
+        location.reload();
+    })
+
+    document.title = "Current Temperature in: " + fullName;
+    document.body.append(changeCity, tempLabel, temperatureDisplay, timeDisplay)
+    document.body.style.justifyContent = "space-around";
 }
 
 //Start of data gathering
@@ -142,7 +146,11 @@ const getFlag = async (country_code) => {
         const res = await fetch(
             `https://countryflagsapi.com/svg/${country_code}`
         );
-        return res.url
+        if (res.url === "https://countryflagsapi.com/svg/undefined") {
+            return "icon.svg"
+        } else {
+            return res.url
+        }
     }
     catch (error) {
         return 'flag unavailable'
@@ -157,10 +165,13 @@ const getLocalTime = (timeZone) => {
 
 //If a city is stored in localStorage - get the current temperature and localTime and display as single search result
 const getLocalStorage = async () => {
-    const temperature = await getTemperature(myCity.aSearchResult.latitude, myCity.aSearchResult.longitude);
-    const flag = await getFlag(myCity.aSearchResult.country_code);
-    const localTime = getLocalTime(myCity.aSearchResult.timezone);
-    domDisplay(myCity.aSearchResult, temperature, flag, localTime)
+    const savedCity = myCity.aSearchResult;
+    const temperature = await getTemperature(savedCity.latitude, savedCity.longitude);
+    const flag = await getFlag(savedCity.country_code);
+    const localTime = getLocalTime(savedCity.timezone);
+    const fullName = `${savedCity.city}${savedCity.state ? ', ' + savedCity.state : ''}${savedCity.country ? ', ' + savedCity.country : ''}`;
+    domDisplay(savedCity, temperature, flag, localTime);
+    handleCityClick(fullName, savedCity, temperature, localTime);
 }
 
 let myCity = JSON.parse(localStorage.getItem("myCity")) || {};

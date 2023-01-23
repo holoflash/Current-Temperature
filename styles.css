@@ -7,6 +7,10 @@
   --color: rgb(108, 140, 174);
 }
 
+* {
+  transition: all 1s;
+}
+
 html,
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
