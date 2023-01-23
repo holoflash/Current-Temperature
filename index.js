@@ -36,8 +36,7 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
     const myCity = { aSearchResult };
     localStorage.setItem("myCity", JSON.stringify(myCity));
 
-    //Set background gradient colors based on temp and time
-    //Cold = blue, warm = red, night = dark-blue, day = orange
+    //Set background gradient colors based on temp and time. Cold = blue, warm = red, night = dark-blue, day = orange
     let red = (temperature + 40) / 80 * 255;
     let blue = (80 - temperature) / 80 * 255;
     let [hours] = localTime.split(':').map(Number);
@@ -66,17 +65,16 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
     tempLabel.classList.add('tempLabel')
     temperatureDisplay.classList.add('temperatureDisplay');
     changeCity.classList.add('changeCity')
-
+    changeCity.textContent = "Change city"
     timeDisplay.textContent = "Temperature fetched: " + localTime
     tempLabel.textContent = fullName;
+
+    //Celsius/fahrenheit operations and toggle
     if (temperatureUnit === "°F") {
         temperature = ((temperature * 9 / 5) + 32).toFixed(1);
     }
     temperatureDisplay.textContent = temperature + temperatureUnit;
-    changeCity.textContent = "Change city"
 
-
-    //Celsius/fahrenheit toggle
     temperatureDisplay.addEventListener('click', () => {
         if (temperatureDisplay.textContent.endsWith("°C")) {
             temperature = ((temperature * 9 / 5) + 32).toFixed(1);
@@ -166,7 +164,7 @@ const getLocalTime = (timeZone) => {
     return date.toLocaleString("en-US", options);
 }
 
-//If a city is stored in localStorage - get the current temperature and localTime and display as single search result
+//If a city is stored in localStorage - get the current temperature and localTime and display it along with stored temp unit
 const getLocalStorage = async () => {
     const savedCity = myCity.aSearchResult;
     const temperature = await getTemperature(savedCity.latitude, savedCity.longitude);
