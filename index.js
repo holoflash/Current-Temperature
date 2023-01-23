@@ -69,19 +69,23 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
 
     timeDisplay.textContent = "Temperature fetched: " + localTime
     tempLabel.textContent = fullName;
-    temperatureDisplay.textContent = temperature + "°C";
+    if (temperatureUnit === "°F") {
+        temperature = ((temperature * 9 / 5) + 32).toFixed(1);
+    }
+    temperatureDisplay.textContent = temperature + temperatureUnit;
     changeCity.textContent = "Change city"
+
 
     //Celsius/fahrenheit toggle
     temperatureDisplay.addEventListener('click', () => {
         if (temperatureDisplay.textContent.endsWith("°C")) {
-            temperature = (temperature * 9 / 5) + 32;
-            temperature = temperature.toFixed(1);
+            temperature = ((temperature * 9 / 5) + 32).toFixed(1);
             temperatureDisplay.textContent = temperature + "°F";
+            localStorage.setItem("temperatureUnit", "°F");
         } else {
-            temperature = (temperature - 32) * 5 / 9;
-            temperature = temperature.toFixed(1);
+            temperature = ((temperature - 32) * 5 / 9).toFixed(1);
             temperatureDisplay.textContent = temperature + "°C";
+            localStorage.setItem("temperatureUnit", "°C");
         }
     });
 
@@ -175,6 +179,7 @@ const getLocalStorage = async () => {
 }
 
 let myCity = JSON.parse(localStorage.getItem("myCity")) || {};
+let temperatureUnit = localStorage.getItem("temperatureUnit") || '°C';
 if (Object.keys(myCity).length > 0) {
     getLocalStorage()
 }
