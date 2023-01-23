@@ -7,12 +7,9 @@ A simple weather app that displays the current temperature in any chosen city. B
 
 -   Search for any city in the world
 -   Display the city name, state, country and flag (if applicable) of the country for each search result
+-   Toggle between celsius and fahrenheit by clicking on the temperature display
 -   Once selected, display the full city name, the current temperature, and the temperature fetch time in local-time
--   Dynamic gradient background indicating the temperature:
-    <span style="color:blue">cool</span>,
-    <span style="color:red">warm</span>,
-    <span style="color:navy">night</span>,
-    <span style="color:orange">day</span>.
+-   Dynamic gradient background indicating the temperature (cold = blue, warm = red, night = dark-blue, day = orange)
 -   Selected city is stored in localStorage for quick access upon refresh/revisit
 -   Reset localStorage via changeCity button
 

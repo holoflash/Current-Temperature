@@ -67,6 +67,19 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
         temperatureDisplay.textContent = temperature + "°C";
         changeCity.textContent = "Change city"
 
+        //Celsius/fahrenheit toggle
+        temperatureDisplay.addEventListener('click', () => {
+            if (temperatureDisplay.textContent.endsWith("°C")) {
+                temperature = (temperature * 9 / 5) + 32;
+                temperature = temperature.toFixed(1);
+                temperatureDisplay.textContent = temperature + "°F";
+            } else {
+                temperature = (temperature - 32) * 5 / 9;
+                temperature = temperature.toFixed(1);
+                temperatureDisplay.textContent = temperature + "°C";
+            }
+        });
+
         changeCity.addEventListener('click', () => {
             localStorage.clear();
             location.reload();

@@ -123,6 +123,7 @@ button:hover {
   color: white;
   transition: all 1s ease;
   text-shadow: 0vh 2vh 0 rgba(0, 0, 0, 0.037);
+  cursor: pointer;
 }
 
 .temperatureDisplay:hover {
