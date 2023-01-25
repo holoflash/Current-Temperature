@@ -1,8 +1,22 @@
+//Home page
+const inputAndSearch = document.createElement('div');
+const input = document.createElement('input');
+const searchBtn = document.createElement('button');
+const loading = document.createElement('img')
+loading.classList.add('loading')
+loading.src = 'icon.svg'
+loading.alt = 'loading'
+document.body.classList.add('gradient')
+inputAndSearch.classList.add('inputAndSearch')
+input.placeholder = 'City'
+searchBtn.textContent = 'Search'
+inputAndSearch.append(input, searchBtn);
+document.body.append(inputAndSearch);
+
 const domDisplay = (aSearchResult, temperature, flag, localTime) => {
     //Generate and display the search results
     const searchResult = document.createElement('div');
     searchResult.classList.add('searchResult')
-
     const city = document.createElement('span').textContent = aSearchResult.city;
     searchResult.append(city)
 
@@ -61,7 +75,6 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
     const tempLabel = document.createElement('div');
     const timeDisplay = document.createElement('div');
     const changeCity = document.createElement('button')
-
     timeDisplay.classList.add('timeDisplay')
     tempLabel.classList.add('tempLabel')
     temperatureDisplay.classList.add('temperatureDisplay');
@@ -75,7 +88,6 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
         temperature = ((temperature * 9 / 5) + 32).toFixed(1);
     }
     temperatureDisplay.textContent = temperature + temperatureUnit;
-
     temperatureDisplay.addEventListener('click', () => {
         if (temperatureDisplay.textContent.endsWith("°C")) {
             temperature = ((temperature * 9 / 5) + 32).toFixed(1);
@@ -87,12 +99,10 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
             localStorage.setItem("temperatureUnit", "°C");
         }
     });
-
     changeCity.addEventListener('click', () => {
         localStorage.clear();
         location.reload();
     })
-
     document.title = "Current Temperature in: " + fullName;
     document.body.append(changeCity, tempLabel, temperatureDisplay, timeDisplay)
     document.body.style.justifyContent = "space-around";
@@ -117,14 +127,12 @@ const search = async (searchTerm) => {
                 country_code: data.results[key].country_code,
                 timezone: data.results[key].timezone
             }
-
             const temperature = await getTemperature(searchResult.latitude, searchResult.longitude);
             const flag = await getFlag(searchResult.country_code);
             const localTime = getLocalTime(searchResult.timezone);
             domDisplay(searchResult, temperature, flag, localTime)
             document.body.classList.remove('disabled');
         }
-
     }
     catch (error) {
         input.value = ''
@@ -170,14 +178,15 @@ const getLocalTime = (timeZone) => {
 
 //If a city is stored in localStorage - get the current temperature and localTime and display it along with stored temp unit
 const getLocalStorage = async () => {
+    document.body.appendChild(loading);
     const savedCity = myCity.aSearchResult;
     const temperature = await getTemperature(savedCity.latitude, savedCity.longitude);
     const flag = await getFlag(savedCity.country_code);
     const localTime = getLocalTime(savedCity.timezone);
     const fullName = `${savedCity.city}${savedCity.state ? ', ' + savedCity.state : ''}${savedCity.country ? ', ' + savedCity.country : ''}`;
-
     domDisplay(savedCity, temperature, flag, localTime);
     handleCityClick(fullName, savedCity, temperature, localTime);
+    loading.remove();
 }
 
 let myCity = JSON.parse(localStorage.getItem("myCity")) || {};
@@ -185,23 +194,6 @@ let temperatureUnit = localStorage.getItem("temperatureUnit") || '°C';
 if (Object.keys(myCity).length > 0) {
     getLocalStorage()
 }
-
-//Home page
-const inputAndSearch = document.createElement('div');
-const input = document.createElement('input');
-const searchBtn = document.createElement('button');
-const loading = document.createElement('img')
-
-loading.classList.add('loading')
-loading.src = 'icon.svg'
-loading.alt = 'loading'
-document.body.classList.add('gradient')
-inputAndSearch.classList.add('inputAndSearch')
-input.placeholder = 'City'
-searchBtn.textContent = 'Search'
-
-inputAndSearch.append(input, searchBtn);
-document.body.append(inputAndSearch);
 
 input.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
