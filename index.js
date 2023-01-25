@@ -18,6 +18,7 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
         const flagIcon = document.createElement('img');
         flagIcon.crossOrigin = 'anonymous'
         flagIcon.src = flag;
+        flagIcon.alt = aSearchResult.country;
         searchResult.append(flagIcon)
     }
     document.body.append(searchResult)
@@ -99,6 +100,7 @@ const handleCityClick = (fullName, aSearchResult, temperature, localTime) => {
 
 //Start of data gathering
 const search = async (searchTerm) => {
+    document.body.appendChild(loading);
     try {
         const res = await fetch(
             `https://geocoding-api.open-meteo.com/v1/search?name=${searchTerm}`
@@ -115,6 +117,7 @@ const search = async (searchTerm) => {
                 country_code: data.results[key].country_code,
                 timezone: data.results[key].timezone
             }
+
             const temperature = await getTemperature(searchResult.latitude, searchResult.longitude);
             const flag = await getFlag(searchResult.country_code);
             const localTime = getLocalTime(searchResult.timezone);
@@ -127,6 +130,7 @@ const search = async (searchTerm) => {
         input.value = ''
         input.placeholder = 'City not found'
     }
+    loading.remove();
 };
 
 const getTemperature = async (lat, long) => {
@@ -186,14 +190,18 @@ if (Object.keys(myCity).length > 0) {
 const inputAndSearch = document.createElement('div');
 const input = document.createElement('input');
 const searchBtn = document.createElement('button');
+const loading = document.createElement('img')
 
-inputAndSearch.append(input, searchBtn);
-document.body.append(inputAndSearch);
+loading.classList.add('loading')
+loading.src = 'icon.svg'
+loading.alt = 'loading'
 document.body.classList.add('gradient')
-
 inputAndSearch.classList.add('inputAndSearch')
 input.placeholder = 'City'
 searchBtn.textContent = 'Search'
+
+inputAndSearch.append(input, searchBtn);
+document.body.append(inputAndSearch);
 
 input.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {

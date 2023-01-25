@@ -57,8 +57,8 @@ input:focus {
 
 .gradient {
   background-image: linear-gradient(to bottom,
-      hsl(0, 0%, 34%),
-      hsl(0, 0%, 21%));
+      #252450,
+      #71608e);
   position: absolute;
   height: 100vh;
   width: 100%;
@@ -93,14 +93,16 @@ input:focus {
   color: var(--active);
   padding: 10px;
   margin: 1vh;
-  background: transparent;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.181);
   transition: border-color 1s;
   cursor: pointer;
-  outline: solid var(--idle) 1px;
+
 }
 
 .searchResult:hover {
   outline: solid var(--active) 2px;
+  background: #71608e;
 }
 
 button {
@@ -109,6 +111,7 @@ button {
   width: auto;
   margin: 2vw;
   padding: 1vh;
+  border-radius: 2px;
   background-color: transparent;
   color: white;
   cursor: pointer;
@@ -116,6 +119,7 @@ button {
 
 button:hover {
   outline: solid var(--active) 2px;
+  background: #71608e43;
 }
 
 .temperatureDisplay {
@@ -156,7 +160,7 @@ img {
 .changeCity {
   position: absolute;
   top: 0;
-  right: 0
+  right: 0;
 }
 
 .disabled {
@@ -175,8 +179,32 @@ img {
   color: orange;
 }
 
-.info {
+@keyframes rotate3d {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  25% {
+    transform: rotateY(90deg);
+  }
+
+  50% {
+    transform: rotateY(180deg);
+  }
+
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.loading {
   position: absolute;
-  bottom: 0;
-  left: 0
+  top: 0;
+  left: 2%;
+  height: 10vh;
+  padding: 0;
+  animation-name: rotate3d;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
