@@ -29,8 +29,8 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
         searchResult.append(country)
     }
     if (flag) {
+        console.log(flag)
         const flagIcon = document.createElement('img');
-        flagIcon.crossOrigin = 'anonymous'
         flagIcon.src = flag;
         flagIcon.alt = aSearchResult.country;
         searchResult.append(flagIcon)
@@ -128,7 +128,7 @@ const search = async (searchTerm) => {
                 timezone: data.results[key].timezone
             }
             const temperature = await getTemperature(searchResult.latitude, searchResult.longitude);
-            const flag = await getFlag(searchResult.country_code);
+            const flag = getFlag(searchResult.country_code)
             const localTime = getLocalTime(searchResult.timezone);
             domDisplay(searchResult, temperature, flag, localTime)
             document.body.classList.remove('disabled');
@@ -154,20 +154,8 @@ const getTemperature = async (lat, long) => {
     }
 }
 
-const getFlag = async (country_code) => {
-    try {
-        const res = await fetch(
-            `https://countryflagsapi.com/svg/${country_code}`
-        );
-        if (res.url === "https://countryflagsapi.com/svg/undefined") {
-            return "icon.svg"
-        } else {
-            return res.url
-        }
-    }
-    catch (error) {
-        return 'flag unavailable'
-    }
+const getFlag = (country_code) => {
+    return `https://flagsapi.com/${country_code}/flat/48.png`
 }
 
 const getLocalTime = (timeZone) => {

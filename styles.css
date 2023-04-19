@@ -19,10 +19,10 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   margin: 0;
-  overflow: scroll;
+
 }
 
 .inputAndSearch {
@@ -38,6 +38,7 @@ input {
   border-bottom: 1px solid #ffffff;
   outline: 0;
   font-size: 2vh;
+  margin-left: 2vw;
   padding: 7px 0;
   color: white;
   background: transparent;
@@ -104,7 +105,6 @@ input:focus {
   background: rgba(0, 0, 0, 0.181);
   transition: border-color 1s;
   cursor: pointer;
-
 }
 
 .searchResult:hover {
@@ -161,8 +161,7 @@ button:hover {
 
 img {
   margin-inline-start: 10px;
-  height: 3vh;
-  width: 5vh;
+  height: 48px;
 }
 
 .changeCity {
@@ -196,6 +195,7 @@ img {
   top: 0;
   left: 0;
   height: 8vh;
+  width: 5vh;
   padding: 0;
   animation-name: rotate3d;
   animation-duration: 2s;
