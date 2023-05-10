@@ -21,8 +21,9 @@ body {
   align-items: center;
   height: 100%;
   width: 100%;
+  padding: 0;
   margin: 0;
-
+  overflow-x: scroll;
 }
 
 .inputAndSearch {
@@ -64,7 +65,7 @@ input:focus {
 .gradient {
   background-image: linear-gradient(to bottom, #252450, #71608e);
   position: absolute;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   z-index: 1;
   animation-name: colorScroll;
@@ -76,7 +77,7 @@ input:focus {
 .gradient::before {
   content: "";
   position: absolute;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   background-image: linear-gradient(to top, rgb(var(--red), var(--green), var(--blue)), var(--color));
   z-index: -1;
@@ -177,8 +178,9 @@ img {
 .holoflash {
   all: unset;
   color: moccasin;
-  position: absolute;
-  bottom: 5px;
+  order: 1;
+  margin: 1rem;
+  bottom: 0;
   cursor: pointer;
 }
 

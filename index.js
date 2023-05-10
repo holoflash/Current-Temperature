@@ -29,10 +29,12 @@ const domDisplay = (aSearchResult, temperature, flag, localTime) => {
         searchResult.append(country)
     }
     if (flag) {
-        console.log(flag)
         const flagIcon = document.createElement('img');
         flagIcon.src = flag;
         flagIcon.alt = aSearchResult.country;
+        if (flagIcon.alt === "undefined") {
+            flagIcon.src = 'icon.svg'
+        }
         searchResult.append(flagIcon)
     }
     document.body.append(searchResult)
@@ -155,6 +157,9 @@ const getTemperature = async (lat, long) => {
 }
 
 const getFlag = (country_code) => {
+    if (country_code === undefined) {
+        return 'icon.svg'
+    }
     return `https://flagsapi.com/${country_code}/flat/48.png`
 }
 
@@ -169,7 +174,7 @@ const getLocalStorage = async () => {
     document.body.appendChild(loading);
     const savedCity = myCity.aSearchResult;
     const temperature = await getTemperature(savedCity.latitude, savedCity.longitude);
-    const flag = await getFlag(savedCity.country_code);
+    const flag = getFlag(savedCity.country_code);
     const localTime = getLocalTime(savedCity.timezone);
     const fullName = `${savedCity.city}${savedCity.state ? ', ' + savedCity.state : ''}${savedCity.country ? ', ' + savedCity.country : ''}`;
     domDisplay(savedCity, temperature, flag, localTime);
